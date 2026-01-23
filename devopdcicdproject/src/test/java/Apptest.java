@@ -1,6 +1,6 @@
 import org.junit.Test;
 import static org.junit.Assert.*;
-public class apptest {
+public class Apptest {
 
     @Test
     public void sampleTest() {

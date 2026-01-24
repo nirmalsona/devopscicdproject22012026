@@ -7,7 +7,7 @@ import java.net.InetSocketAddress;
 public class App {
     public static void main(String[] args) throws Exception {
 
-        HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
+        HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
 
         server.createContext("/", exchange -> {
             String response = "Hello DevOps CI/CD Project & Nirmal Shanker";
@@ -18,7 +18,7 @@ public class App {
         });
 
         server.start();
-        System.out.println("Web server started on port 8000");
+        System.out.println("Web server started on port 8080");  //NOSONAR
     }
 }
 

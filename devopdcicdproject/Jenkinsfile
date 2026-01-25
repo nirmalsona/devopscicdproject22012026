@@ -78,7 +78,7 @@ pipeline {
     }
     
     
-    stage('Deploy to Kubernetes') {
+    stage('Pods check to Kubernetes') {
   steps {
     withCredentials([file(credentialsId: 'k8s-dev-deployer', variable: 'KUBECONFIG')]) {
       sh '''

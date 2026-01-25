@@ -2,7 +2,7 @@ pipeline {
     agent any
     
     stages{
-        stage('checkout the code'){
+        stage('checkout code'){
             
             steps{
                 git branch: 'main', url: 'https://github.com/nirmalsona/devopscicdproject22012026.git'

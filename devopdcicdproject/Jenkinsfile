@@ -1,0 +1,100 @@
+pipeline {
+    agent any
+    
+    
+    
+    stages{
+        stage('checkout the code'){
+            
+            steps{
+                git branch: 'main', url: 'https://github.com/nirmalsona/devopscicdproject22012026.git'
+            }
+        }
+		
+		 stage('code quality check') {
+            steps {
+                withSonarQubeEnv('sonarqube-server') {
+                    sh 'cd devopdcicdproject/ && mvn sonar:sonar -Dsonar.projectKey=cicd-devops22012026 -Dsonar.projectName=cicd-devops22012026'
+                }
+            }
+        }
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 10, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+        
+        
+        stage('build code'){
+            
+            steps{
+                sh 'cd devopdcicdproject/ && mvn clean package'
+            }
+        }
+        stage ('Unit test'){
+            steps{
+                sh 'cd devopdcicdproject/ && mvn test'
+            }
+        }
+        
+       
+        
+        stage('Build the docker image'){
+
+            steps{
+                sh '''
+                   cd devopdcicdproject/
+                   docker build -t nirmaldocker1987/devopscicdproject:$BUILD_ID .
+                '''
+            }
+    }
+    
+    stage ('Trivy scan image'){
+        
+        steps{
+            
+            sh '''
+            cd devopdcicdproject/
+            trivy clean --java-db
+            trivy image --timeout 20m --scanners vuln  --exit-code 1 --severity HIGH,CRITICAL nirmaldocker1987/devopscicdproject:$BUILD_ID
+            
+            
+            '''
+        }
+    }
+    
+    
+    stage('docker image push'){
+        
+        steps{
+            
+            withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', 
+                                  usernameVariable: 'DOCKER_USER', 
+                                  passwordVariable: 'DOCKER_PASS')]) {
+    sh '''
+        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+        docker push nirmaldocker1987/devopscicdproject:$BUILD_ID
+    '''
+            
+        }
+    }
+    }
+    
+    
+    stage('finally deploy to k8s cluster'){
+        steps{
+            
+            sh'''
+            kubectl create deployment cicdproject --image=nirmaldocker1987/devopscicdproject:$BUILD_ID
+            
+            kubectl expose deployment cicdproject --name mycicdsvc --type=NodePort --port=80 --target-port=1100
+            '''    
+        
+        }
+    }
+    
+}
+
+}

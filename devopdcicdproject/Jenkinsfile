@@ -9,7 +9,19 @@ pipeline {
             }
         }
 		
-		 stage('code quality check') {
+        stage('build code'){
+            
+            steps{
+                sh 'cd devopdcicdproject/ && mvn clean package'
+            }
+        }
+        stage ('Unit test'){
+            steps{
+                sh 'cd devopdcicdproject/ && mvn test'
+            }
+        }
+        
+       stage('code quality check') {
             steps {
                 withSonarQubeEnv('sonarqube-server') {
                     sh 'cd devopdcicdproject/ && mvn sonar:sonar -Dsonar.projectKey=cicd-devops22012026 -Dsonar.projectName=cicd-devops22012026'
@@ -23,21 +35,6 @@ pipeline {
                 }
             }
         }
-        
-        
-        stage('build code'){
-            
-            steps{
-                sh 'cd devopdcicdproject/ && mvn clean package'
-            }
-        }
-        stage ('Unit test'){
-            steps{
-                sh 'cd devopdcicdproject/ && mvn test'
-            }
-        }
-        
-       
         
         stage('Build the docker image'){
 

@@ -33,17 +33,17 @@ spec:
 
 ---
 
-apiVersion: v1
 kind: Service
+apiVersion: v1
 metadata:
   name: myapp
   namespace: dev
-spec:
-  type: NodePort
   selector:
     app: myapp
+spec:
+  type: NodePort
   ports:
-    - port: 8000        # Service port
+    - port: 8000
       targetPort: 8000
       
     

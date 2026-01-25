@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp
+  namespace: dev
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      containers:
+      - name: myapp
+        image: nirmaldocker1987/devopscicdproject:IMAGE_TAG
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 20
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: myapp
+  namespace: dev
+  selector:
+    app: myapp
+spec:
+  type: NodePort
+  ports:
+    - port: 8000
+      targetPort: 8000
+      
+    

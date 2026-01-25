@@ -78,17 +78,15 @@ pipeline {
     }
     
     
-    stage('finally deploy to k8s cluster'){
-        steps{
-            
-            sh'''
-            kubectl create deployment cicdproject --image=nirmaldocker1987/devopscicdproject:$BUILD_ID
-            
-            kubectl expose deployment cicdproject --name mycicdsvc --type=NodePort --port=80 --target-port=1100
-            '''    
-        
-        }
+    stage('Deploy to Kubernetes') {
+  steps {
+    withCredentials([file(credentialsId: 'k8s-dev-deployer', variable: 'KUBECONFIG')]) {
+      sh '''
+       kubectl pods -n dev
+      '''
     }
+  }
+}
     
 }
 

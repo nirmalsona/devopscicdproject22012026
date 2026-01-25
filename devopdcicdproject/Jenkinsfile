@@ -82,7 +82,7 @@ pipeline {
   steps {
     withCredentials([file(credentialsId: 'k8s-dev-deployer', variable: 'KUBECONFIG')]) {
       sh '''
-       kubectl pods -n dev
+       kubectl get pods -n dev
       '''
     }
   }
